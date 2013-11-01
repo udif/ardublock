@@ -19,10 +19,16 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import processing.app.Editor;
+import processing.app.tools.AutoFormat;
+import processing.app.tools.Tool;
 
 import com.ardublock.core.Context;
 import com.ardublock.ui.listener.ArdublockWorkspaceListener;
@@ -118,6 +124,7 @@ public class OpenblocksFrame extends JFrame
 				context.getEditor().handleSerial();
 			}
 		});
+		
 		JButton saveImageButton = new JButton(uiMessageBundle.getString("ardublock.ui.saveImage"));
 		saveImageButton.addActionListener(new ActionListener () {
 			public void actionPerformed(ActionEvent e) {
@@ -149,6 +156,20 @@ public class OpenblocksFrame extends JFrame
 		buttons.add(generateButton);
 		buttons.add(serialMonitorButton);
 
+		//if (!context.isInArduino())
+		{
+			final Tool tool = new AutoFormat();
+			tool.init(context.getEditor());
+			JButton testButton = new JButton("TEST");
+			testButton.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e)
+				{
+					SwingUtilities.invokeLater(tool);
+				}
+			});
+			buttons.add(testButton);
+		}
+		
 		JPanel bottomPanel = new JPanel();
 		JButton websiteButton = new JButton(uiMessageBundle.getString("ardublock.ui.website"));
 		websiteButton.addActionListener(new ActionListener () {
@@ -176,7 +197,7 @@ public class OpenblocksFrame extends JFrame
 		this.add(bottomPanel, BorderLayout.SOUTH);
 		this.add(workspace, BorderLayout.CENTER);
 	}
-	
+
 	public void doOpenArduBlockFile()
 	{
 		if (context.isWorkspaceChanged())
